@@ -1,0 +1,417 @@
+:root {
+  --background: #f4f6fb;
+  --surface: #ffffff;
+  --primary: #4a6cf7;
+  --primary-dark: #3856d4;
+  --accent: #f7b84a;
+  --text: #1f2933;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", "Segoe UI", sans-serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.app-header {
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.app-header p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+
+.calendar-panel,
+.day-panel {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 1.5rem;
+}
+
+.calendar-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.calendar-title {
+  font-weight: 600;
+}
+
+.calendar-controls button {
+  border: none;
+  background: var(--surface);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-md);
+  transition: background 0.2s;
+}
+
+.calendar-controls button:hover,
+.calendar-controls button:focus-visible {
+  background: var(--background);
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar .day-name {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0.5rem 0;
+  font-weight: 500;
+}
+
+.calendar .day-cell {
+  position: relative;
+  text-align: center;
+  padding: 0.8rem 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+
+.calendar .day-cell:hover:not(.selected),
+.calendar .day-cell:focus-visible:not(.selected) {
+  background: var(--background);
+}
+
+.calendar .day-cell:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.calendar .day-cell.today {
+  border: 2px solid var(--primary);
+  font-weight: 600;
+}
+
+.calendar .day-cell.selected {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.calendar .day-cell.other-month {
+  color: rgba(31, 41, 51, 0.3);
+}
+
+.calendar .day-cell .indicators {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+}
+
+.calendar .indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.calendar .indicator.task {
+  background: var(--primary);
+}
+
+.calendar .indicator.reflection {
+  background: var(--accent);
+}
+
+.calendar-legend {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  color: var(--muted);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.25rem;
+}
+
+.legend-dot.task {
+  background: var(--primary);
+}
+
+.legend-dot.reflection {
+  background: var(--accent);
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.day-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.link-button:hover,
+.link-button:focus-visible {
+  text-decoration: underline;
+}
+
+.tasks-section,
+.reflection-section {
+  margin-bottom: 2rem;
+}
+
+.task-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: var(--background);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+}
+
+.task-form input[type="text"],
+.task-form select,
+.task-form input[type="time"] {
+  padding: 0.65rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.task-form button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.task-form button:hover,
+.task-form button:focus-visible {
+  background: var(--primary-dark);
+}
+
+.time-group.hidden {
+  display: none;
+}
+
+.task-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.task-list.empty-state {
+  background: var(--background);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.task-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.task-item.completed {
+  opacity: 0.65;
+}
+
+.task-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.task-item.completed .task-title {
+  text-decoration: line-through;
+}
+
+.task-title {
+  font-weight: 600;
+}
+
+.task-meta {
+  font-size: 0.85rem;
+  color: var(--primary);
+  background: rgba(74, 108, 247, 0.08);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.delete-task {
+  border: none;
+  background: none;
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-task:hover,
+.delete-task:focus-visible {
+  text-decoration: underline;
+}
+
+.reflection-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--background);
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+input[type="range"] {
+  width: 180px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.form-actions button {
+  background: var(--accent);
+  color: #1f2937;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.7rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.form-actions button:hover,
+.form-actions button:focus-visible {
+  filter: brightness(0.95);
+}
+
+#saveStatus {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-panel {
+    order: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .task-form {
+    flex-direction: column;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  input[type="range"] {
+    width: 100%;
+  }
+}

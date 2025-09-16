@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하루 할일 & 감사 노트</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>하루 할일 & 감사 노트</h1>
+    <p>시간대별 계획을 세우고 하루를 돌아보는 공간</p>
+  </header>
+  <main class="layout">
+    <aside class="calendar-panel">
+      <div class="calendar-controls">
+        <button id="prevMonth" aria-label="이전 달">◀</button>
+        <div id="currentMonth" class="calendar-title" aria-live="polite"></div>
+        <button id="nextMonth" aria-label="다음 달">▶</button>
+      </div>
+      <div id="calendar" class="calendar"></div>
+      <div class="calendar-legend">
+        <span class="legend-dot task"></span> 할일 있음
+        <span class="legend-dot reflection"></span> 회고/감사 작성
+      </div>
+    </aside>
+    <section class="day-panel">
+      <div class="day-header">
+        <h2 id="selectedDateTitle"></h2>
+        <button id="todayButton" class="link-button">오늘 보기</button>
+      </div>
+      <section class="tasks-section">
+        <h3>할일 작성</h3>
+        <form id="taskForm" class="task-form">
+          <label for="taskTitle" class="sr-only">할일 내용</label>
+          <input id="taskTitle" type="text" placeholder="할일을 입력하세요" required>
+          <label for="segmentType" class="sr-only">시간 구분 방식</label>
+          <select id="segmentType">
+            <option value="period">아침/점심/저녁</option>
+            <option value="customTime">직접 시간 지정</option>
+          </select>
+          <div class="period-group" id="periodGroup">
+            <label for="taskPeriod" class="sr-only">시간대</label>
+            <select id="taskPeriod">
+              <option value="morning">아침</option>
+              <option value="afternoon">점심</option>
+              <option value="evening">저녁</option>
+              <option value="night">밤</option>
+            </select>
+          </div>
+          <div class="time-group hidden" id="timeGroup">
+            <label for="taskTime" class="sr-only">시간</label>
+            <input id="taskTime" type="time" value="09:00">
+          </div>
+          <button type="submit">할일 추가</button>
+        </form>
+        <div id="taskList" class="task-list empty-state">
+          <p>아직 작성한 할일이 없어요. 계획을 추가해보세요!</p>
+        </div>
+      </section>
+      <section class="reflection-section">
+        <h3>하루 돌아보기</h3>
+        <form id="reflectionForm" class="reflection-form">
+          <div class="form-row">
+            <label for="dayRating">오늘의 만족도</label>
+            <div class="rating-input">
+              <input id="dayRating" type="range" min="1" max="5" step="1" value="3">
+              <div id="ratingLabel" aria-live="polite">보통 (3)</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="daySummary">오늘 하루 평가</label>
+            <textarea id="daySummary" rows="3" placeholder="오늘 하루는 어땠나요?"></textarea>
+          </div>
+          <div class="form-row">
+            <label for="gratitude">감사한 순간 기록</label>
+            <textarea id="gratitude" rows="3" placeholder="감사했던 순간을 적어보세요"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit">기록 저장</button>
+            <span id="saveStatus" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+  <template id="taskItemTemplate">
+    <div class="task-item">
+      <label>
+        <input type="checkbox" class="task-complete">
+        <span class="task-title"></span>
+      </label>
+      <div class="task-meta"></div>
+      <button class="delete-task" type="button" title="삭제">삭제</button>
+    </div>
+  </template>
+  <script src="app.js" defer></script>
+</body>
+</html>
