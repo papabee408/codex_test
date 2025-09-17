@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>하루 기록 &amp; 인사이트 허브</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/app.css" />
+    <link rel="stylesheet" href="styles/insights.css" />
+  </head>
+  <body>
+    <header class="top-bar">
+      <div>
+        <h1>하루 기록 &amp; 인사이트 허브</h1>
+        <p class="subtitle">
+          하루를 정리하고 감사한 순간을 기록한 뒤, 바로 아래에서 흐름과 통계를 확인해 보세요.
+        </p>
+      </div>
+      <nav class="header-actions" aria-label="주요 섹션 바로가기">
+        <a class="ghost-button" href="#entry-section">기록 작성</a>
+        <a class="ghost-button" href="#insights-section">인사이트 보기</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="entry-section" class="section-group" aria-labelledby="entry-section-heading">
+        <h2 id="entry-section-heading" class="visually-hidden">기록 작성 &amp; 관리</h2>
+        <section class="panel" aria-labelledby="stats-title">
+          <div class="panel-header">
+            <div>
+              <h2 id="stats-title">기록 요약</h2>
+              <p class="helper-text">
+                최근 기록 현황을 간단히 확인하세요. 내보내기·불러오기 기능으로 다른 환경과 쉽게 동기화할 수 있습니다.
+              </p>
+            </div>
+            <div class="header-actions">
+              <button type="button" class="ghost-button" id="entry-export-button">JSON 내보내기</button>
+              <label class="ghost-button file-button" for="entry-import-input">
+                JSON 불러오기
+                <input id="entry-import-input" type="file" accept="application/json" hidden />
+              </label>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <h3>총 기록</h3>
+              <strong id="stat-total-entries">0</strong>
+              <span class="stat-detail" id="stat-period">기록을 추가해 보세요.</span>
+            </article>
+            <article class="stat-card">
+              <h3>평균 만족도</h3>
+              <strong id="stat-average-satisfaction">-</strong>
+              <span class="stat-detail" id="stat-satisfaction-count">만족도 데이터를 추가해 보세요.</span>
+            </article>
+            <article class="stat-card">
+              <h3>할 일 완료율</h3>
+              <strong id="stat-completion-rate">-</strong>
+              <span class="stat-detail" id="stat-completion-detail">등록된 할 일이 없습니다.</span>
+            </article>
+            <article class="stat-card">
+              <h3>연속 기록</h3>
+              <strong id="stat-streak">0일</strong>
+              <span class="stat-detail" id="stat-longest-streak">연속 기록을 시작해 보세요.</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="form-title">
+          <div class="panel-header">
+            <h2 id="form-title">새 기록 추가</h2>
+            <p class="helper-text">
+              오늘 완료한 할 일과 감사한 순간을 기록하면, 저장된 기록과 인사이트가 자동으로 갱신됩니다.
+            </p>
+          </div>
+          <form id="entry-form" class="entry-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="entry-date">기록 날짜</label>
+                <input id="entry-date" name="date" type="date" required />
+              </div>
+              <div class="field satisfaction-field">
+                <label for="entry-satisfaction">만족도 (0~5)</label>
+                <div class="range-field">
+                  <input id="entry-satisfaction" type="range" min="0" max="5" step="0.5" value="3" />
+                  <span id="satisfaction-display" aria-live="polite">3.0</span>
+                </div>
+                <label class="checkbox">
+                  <input id="skip-satisfaction" type="checkbox" />
+                  만족도 입력하지 않음
+                </label>
+              </div>
+              <div class="field full">
+                <label for="entry-note">오늘의 메모 (선택)</label>
+                <textarea
+                  id="entry-note"
+                  name="note"
+                  rows="3"
+                  placeholder="느낀 점이나 내일을 위한 메모를 적어보세요."
+                ></textarea>
+              </div>
+            </div>
+
+            <fieldset class="fieldset">
+              <legend>할 일 목록</legend>
+              <p class="helper-text">오늘 계획하거나 완료한 할 일을 입력하고 완료 여부를 표시하세요.</p>
+              <div class="inline-form">
+                <input id="task-input" type="text" placeholder="할 일을 입력하고 Enter 또는 추가 버튼을 누르세요." />
+                <button type="button" id="add-task-button" class="ghost-button">추가</button>
+              </div>
+              <ul id="task-list" class="chip-list" aria-live="polite"></ul>
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend>감사한 일 (선택)</legend>
+              <div class="inline-form">
+                <input id="gratitude-input" type="text" placeholder="감사했던 순간을 하나씩 입력하세요." />
+                <button type="button" id="add-gratitude-button" class="ghost-button">추가</button>
+              </div>
+              <ul id="gratitude-draft-list" class="chip-list" aria-live="polite"></ul>
+            </fieldset>
+
+            <div class="form-actions">
+              <button type="submit" class="primary-button">기록 저장</button>
+              <button type="reset" class="ghost-button">초기화</button>
+            </div>
+            <p id="form-message" class="helper-text" role="status"></p>
+          </form>
+        </section>
+
+        <section class="panel" aria-labelledby="entries-title">
+          <div class="panel-header">
+            <h2 id="entries-title">저장된 기록</h2>
+            <div class="entries-controls">
+              <label class="filter">
+                <span>월별 보기</span>
+                <input id="month-filter" type="month" />
+              </label>
+              <label class="filter">
+                <span>검색</span>
+                <input id="search-input" type="search" placeholder="메모, 감사 키워드, 할 일을 검색" />
+              </label>
+              <button type="button" id="clear-filters" class="ghost-button small">필터 초기화</button>
+            </div>
+          </div>
+          <div id="entries-container" class="entries-container" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section id="insights-section" class="section-group" aria-labelledby="insights-heading">
+        <header class="top-bar">
+          <div>
+            <h2 id="insights-heading">기록 인사이트 대시보드</h2>
+            <p class="subtitle">
+              일지와 감사일기를 한눈에 살펴보고, 나의 흐름을 파악해 보세요.
+            </p>
+          </div>
+          <div class="header-actions">
+            <a class="ghost-button" href="#entry-section">기록 작성하기</a>
+            <button id="refresh-button" class="ghost-button" type="button">🔄 데이터 다시 불러오기</button>
+            <label class="ghost-button" for="file-import">
+              📂 JSON 불러오기
+              <input id="file-import" type="file" accept="application/json" hidden />
+            </label>
+          </div>
+        </header>
+
+        <section class="panel" aria-labelledby="data-source-title">
+          <div class="panel-header">
+            <h2 id="data-source-title">데이터 선택 &amp; 기간 필터</h2>
+            <span id="data-source-label" class="tag">로컬 데이터 사용 중</span>
+          </div>
+          <div class="filters">
+            <div class="filter-group">
+              <label for="from-date">시작일</label>
+              <input id="from-date" type="date" />
+            </div>
+            <div class="filter-group">
+              <label for="to-date">종료일</label>
+              <input id="to-date" type="date" />
+            </div>
+            <div class="filter-group">
+              <label for="dataset-select">데이터 원본</label>
+              <select id="dataset-select"></select>
+            </div>
+            <div class="filter-actions">
+              <button id="apply-filter" type="button" class="primary-button">적용하기</button>
+              <button id="reset-filter" type="button" class="ghost-button">초기화</button>
+            </div>
+          </div>
+          <p class="helper-text" id="data-hint"></p>
+        </section>
+
+        <section class="panel" aria-labelledby="summary-title">
+          <div class="panel-header">
+            <h2 id="summary-title">핵심 지표</h2>
+            <div class="summary-tags">
+              <span class="tag" id="entry-count-tag"></span>
+              <span class="tag" id="period-tag"></span>
+            </div>
+          </div>
+          <div class="summary-grid" id="summary-grid"></div>
+        </section>
+
+        <section class="panel charts-panel" aria-labelledby="chart-title">
+          <div class="panel-header">
+            <h2 id="chart-title">흐름 시각화</h2>
+            <div class="chart-legend" id="chart-legend"></div>
+          </div>
+          <div class="charts-grid">
+            <article class="chart-card">
+              <header>
+                <h3>만족도 추세</h3>
+                <p>날짜별 만족도 변화를 살펴보세요.</p>
+              </header>
+              <canvas id="satisfaction-chart" aria-label="만족도 차트" role="img"></canvas>
+            </article>
+            <article class="chart-card">
+              <header>
+                <h3>할 일 수행률</h3>
+                <p>하루 동안 계획한 할 일과 완료 수를 비교합니다.</p>
+              </header>
+              <canvas id="todo-chart" aria-label="할 일 차트" role="img"></canvas>
+            </article>
+            <article class="chart-card">
+              <header>
+                <h3>누적 현황</h3>
+                <p>기간 동안의 총합 및 누적 흐름을 살펴보세요.</p>
+              </header>
+              <canvas id="cumulative-chart" aria-label="누적 차트" role="img"></canvas>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel gratitude" aria-labelledby="gratitude-title">
+          <div class="panel-header">
+            <h2 id="gratitude-title">감사일기 모아보기</h2>
+            <div class="gratitude-actions">
+              <input
+                type="search"
+                id="gratitude-search"
+                placeholder="키워드 검색 (예: 가족, 건강)"
+                aria-label="감사일기 검색"
+              />
+              <select id="gratitude-sort" aria-label="정렬 기준 선택">
+                <option value="date-desc">최신순</option>
+                <option value="date-asc">오래된 순</option>
+                <option value="length-desc">감사 목록 많은 순</option>
+                <option value="length-asc">감사 목록 적은 순</option>
+              </select>
+            </div>
+          </div>
+          <div class="gratitude-summary" id="gratitude-summary"></div>
+          <div id="gratitude-list" class="gratitude-list"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="table-title">
+          <div class="panel-header">
+            <h2 id="table-title">상세 기록</h2>
+            <button id="insights-export-button" type="button" class="ghost-button">💾 현재 보기 내보내기</button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">날짜</th>
+                  <th scope="col">만족도</th>
+                  <th scope="col">할 일 (완료/전체)</th>
+                  <th scope="col">완료율</th>
+                  <th scope="col">감사 메모</th>
+                </tr>
+              </thead>
+              <tbody id="entries-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel memo" aria-labelledby="memo-title">
+          <div class="panel-header">
+            <h2 id="memo-title">상시 메모 &amp; 공지보드</h2>
+            <p class="panel-description">
+              잊지 말아야 할 일정이나 마음가짐을 고정해 두세요.
+            </p>
+          </div>
+          <div class="memo-layout">
+            <form id="memo-form" class="memo-form">
+              <div class="form-row">
+                <label for="memo-title-input">제목</label>
+                <input id="memo-title-input" name="title" type="text" required placeholder="예: 6/18 모의고사 준비" />
+              </div>
+              <div class="form-row">
+                <label for="memo-date-input">중요 날짜 (선택)</label>
+                <input id="memo-date-input" name="date" type="date" />
+              </div>
+              <div class="form-row">
+                <label for="memo-body-input">내용</label>
+                <textarea
+                  id="memo-body-input"
+                  name="body"
+                  rows="3"
+                  placeholder="예: 오늘도 화이팅! / 매주 수요일은 복습"
+                ></textarea>
+              </div>
+              <div class="form-options">
+                <label class="checkbox">
+                  <input id="memo-pin-input" name="pinned" type="checkbox" />
+                  상단에 고정
+                </label>
+                <label class="checkbox">
+                  <input id="memo-highlight-input" name="highlight" type="checkbox" />
+                  강조 표시
+                </label>
+              </div>
+              <button type="submit" class="primary-button">메모 추가</button>
+            </form>
+
+            <aside class="memo-side">
+              <div class="calendar" aria-label="메모 달력">
+                <div class="calendar-header">
+                  <button type="button" id="calendar-prev" aria-label="이전 달">◀</button>
+                  <div id="calendar-label" class="calendar-label"></div>
+                  <button type="button" id="calendar-next" aria-label="다음 달">▶</button>
+                </div>
+                <div class="calendar-grid" role="grid" aria-readonly="true">
+                  <div class="calendar-weekday" role="columnheader">일</div>
+                  <div class="calendar-weekday" role="columnheader">월</div>
+                  <div class="calendar-weekday" role="columnheader">화</div>
+                  <div class="calendar-weekday" role="columnheader">수</div>
+                  <div class="calendar-weekday" role="columnheader">목</div>
+                  <div class="calendar-weekday" role="columnheader">금</div>
+                  <div class="calendar-weekday" role="columnheader">토</div>
+                  <div id="calendar-dates" class="calendar-dates" role="rowgroup"></div>
+                </div>
+              </div>
+
+              <div class="memo-controls" aria-label="메모 필터">
+                <input id="memo-search" type="search" placeholder="메모 검색" />
+                <select id="memo-filter">
+                  <option value="all">전체 보기</option>
+                  <option value="pinned">고정 메모</option>
+                  <option value="upcoming">다가오는 일정</option>
+                  <option value="completed">완료된 메모</option>
+                </select>
+              </div>
+
+              <div id="memo-empty" class="memo-empty" hidden>
+                <p>표시할 메모가 없습니다. 새로운 메모를 추가해 보세요.</p>
+              </div>
+            </aside>
+
+            <div id="memo-list" class="memo-list" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="empty-state" class="empty-state" hidden>
+          <h2>표시할 기록이 아직 없어요</h2>
+          <p>
+            기존 일지 앱을 사용하고 있다면, 해당 브라우저의
+            <strong>localStorage</strong>에 저장된 데이터를 자동으로 읽어옵니다.
+            다른 기기에서 가져오고 싶다면 JSON 파일을 불러오세요.
+          </p>
+          <ul>
+            <li>데이터는 <code>journalEntries</code> 또는 <code>wellnessEntries</code> 형식을 지원합니다.</li>
+            <li>각 항목은 날짜(<code>date</code>), 만족도(<code>satisfaction</code> 등), 할 일 목록, 감사 메모를 포함합니다.</li>
+            <li>JSON 파일을 불러오면 이 페이지에서만 사용할 임시 데이터가 저장됩니다.</li>
+          </ul>
+        </section>
+      </section>
+    </main>
+
+    <template id="memo-template">
+      <article class="memo-card" data-id="">
+        <header>
+          <h3 class="memo-title"></h3>
+          <div class="memo-meta"></div>
+        </header>
+        <p class="memo-body"></p>
+        <footer>
+          <button type="button" class="memo-action" data-action="toggle-pin">📌 고정</button>
+          <button type="button" class="memo-action" data-action="toggle-complete">✅ 완료</button>
+          <button type="button" class="memo-action" data-action="delete">🗑 삭제</button>
+        </footer>
+      </article>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="scripts/app.js"></script>
+    <script type="module" src="scripts/insights.js"></script>
+  </body>
+</html>

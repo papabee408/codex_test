@@ -38,9 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setDefaultFilters();
   applyFilters();
   initializeMemoBoard();
+  window.addEventListener("journalEntries:updated", handleEntriesUpdated);
 });
 
-function initializeDatasets() {
+function initializeDatasets(preferredKey = null) {
   state.datasets.clear();
   state.datasetOrder = [];
 
@@ -54,8 +55,12 @@ function initializeDatasets() {
     registerDataset(sample);
     state.activeKey = sample.key;
   } else {
-    const preferred = DATASET_PRIORITY.find((key) => state.datasets.has(key));
-    state.activeKey = preferred ?? state.datasetOrder[0];
+    if (preferredKey && state.datasets.has(preferredKey)) {
+      state.activeKey = preferredKey;
+    } else {
+      const priorityMatch = DATASET_PRIORITY.find((key) => state.datasets.has(key));
+      state.activeKey = priorityMatch ?? state.datasetOrder[0];
+    }
   }
 
   populateDatasetSelect();
@@ -205,8 +210,23 @@ function setupEventListeners() {
     .addEventListener("change", renderGratitudeSection);
 
   document
-    .getElementById("export-button")
+    .getElementById("insights-export-button")
     .addEventListener("click", handleExport);
+}
+
+function handleEntriesUpdated() {
+  const previousKey = state.activeKey;
+  initializeDatasets(previousKey);
+
+  const fromInput = document.getElementById("from-date");
+  const toInput = document.getElementById("to-date");
+  const activeChanged = previousKey && previousKey !== state.activeKey;
+
+  if (activeChanged || (!fromInput.value && !toInput.value)) {
+    setDefaultFilters();
+  }
+
+  applyFilters();
 }
 
 function applyFilters() {
